@@ -3,7 +3,7 @@ import { Tile } from '../models/Tile'
 
 type TileProps = {
   tile: Tile
-  onClick: (tile: Tile) => void
+  onClick: () => void
   onMouseEnter: (tile: Tile) => void
   onMouseLeave: () => void
 }
@@ -20,7 +20,7 @@ const Block: React.FC<TileProps> = ({
         className={`h-16 w-16 cursor-pointer transition-colors rounded-full bg-${
           tile.color
         }-${tile.hover ? '600' : '400'}`}
-        onClick={() => onClick(tile)}
+        onClick={onClick}
         onMouseEnter={() => onMouseEnter(tile)}
         onMouseLeave={onMouseLeave}
       ></div>

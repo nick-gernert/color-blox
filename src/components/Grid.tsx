@@ -6,7 +6,7 @@ type GridProps = {
   grid: any[][]
   onMouseEnter: (tile: Tile) => void
   onMouseLeave: () => void
-  onClick: (tile: Tile) => void
+  onClick: () => void
 }
 
 const Grid: React.FC<GridProps> = ({ grid, onMouseEnter, onMouseLeave, onClick }) => {

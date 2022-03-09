@@ -1,6 +1,13 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Grid from './Grid'
-import { checkNeighbors, createGrid, clearHover, removeBlox } from '../gameHelpers'
+import GameOver from './GameOver'
+import {
+  checkNeighbors,
+  createGrid,
+  clearHover,
+  removeBlox,
+  checkAvailableMoves,
+} from '../gameHelpers'
 import { Tile } from '../models/Tile'
 
 const ColorBlox: React.FC = () => {
@@ -8,8 +15,11 @@ const ColorBlox: React.FC = () => {
 
   const [grid, setGrid] = useState(createGrid())
 
+  useEffect(() => {
+    setMovesAvailable(checkAvailableMoves(grid))
+  }, [grid])
+
   const handleMouseEnter = (tile: Tile) => {
-    console.log(tile)
     setGrid(checkNeighbors(grid, tile))
   }
 
@@ -17,20 +27,23 @@ const ColorBlox: React.FC = () => {
     setGrid(clearHover(grid))
   }
 
-  const handleClick = (tile: Tile) => {
+  const handleClick = () => {
     if (!movesAvailable) return
-    setGrid(removeBlox(grid, tile))
+    setGrid(removeBlox(grid))
   }
-  console.log('re-render')
+  
   return (
-    <div className="container mx-auto grid content-center justify-center h-full">
-      <Grid
-        grid={grid}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        onClick={handleClick}
-      />
-    </div>
+    <>
+      {!movesAvailable && <GameOver />}
+      <div className="container mx-auto grid content-center justify-center h-full">
+        <Grid
+          grid={grid}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+          onClick={handleClick}
+        />
+      </div>
+    </>
   )
 }
 

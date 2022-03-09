@@ -29,7 +29,7 @@ export const createGrid = (): Tile[][] => {
   return arr
 }
 
-export const removeBlox = (grid: Tile[][], tile: Tile) => {
+export const removeBlox = (grid: Tile[][]) => {
   const newGrid = grid.map((row) => row.map((col) => col))
 
   newGrid.map((row) =>
@@ -40,24 +40,42 @@ export const removeBlox = (grid: Tile[][], tile: Tile) => {
     })
   )
 
-  bubbleGrays(newGrid)
-
+  bubbleGraysUp(newGrid)
+  bubbleGraysLeft(newGrid)
   return newGrid
 }
 
-const bubbleGrays = (grid: Tile[][]) => {
-  // grid.forEach(row => {
-  //   row.forEach(block => {
-  //     if (block.color === 'gray' && grid[block.row][block.col-1].color !== 'gray') {
-  //       block
-  //     }
-  //   })
-  // })
+const bubbleGraysUp = (grid: Tile[][]) => {
+  for (let i = 0; i < grid.length; i++) {
+    for (let j = 0; j < grid.length; j++) {
+      for (let k = grid.length - 1; k > 0; k--) {
+        if (grid[k][i].color === 'gray') {
+          const tmp = { ...grid[k][i] }
+          grid[k][i] = { ...grid[k - 1][i], col: i, row: k }
+          grid[k - 1][i] = { ...tmp, col: i, row: k - 1 }
+        }
+      }
+    }
+  }
+}
+
+const bubbleGraysLeft = (grid: Tile[][]) => {
+  for (let i = 1; i < grid.length; i++) {
+    if (grid[grid.length - 1][i].color === 'gray') {
+      for (let j = 0; j < grid.length; j++) {
+        for (let k = i; k > 0; k--) {
+          const tmp = { ...grid[j][k] }
+          grid[j][k] = { ...grid[j][k - 1], col: k, row: j }
+          grid[j][k - 1] = { ...tmp, col: k - 1, row: j }
+        }
+      }
+    }
+  }
 }
 
 export const checkNeighbors = (grid: Tile[][], tile: Tile) => {
   const newGrid = grid.map((row) => row.map((col) => col))
-  
+
   if (tile.color === 'gray') return newGrid
 
   checkPlus(newGrid, tile)
@@ -71,6 +89,21 @@ export const clearHover = (grid: Tile[][]) => {
   newGrid.map((row) => row.map((tile) => (tile.hover = false)))
 
   return newGrid
+}
+
+export const checkAvailableMoves = (grid: Tile[][]) => {
+  for (let i = 0; i < GRID_HEIGHT; i++) {
+    for (let j = 0; j < GRID_WIDTH; j++) {
+      if (grid[i][j].color === 'gray') continue
+      if (j !== GRID_WIDTH - 1 &&  grid[i][j].color === grid[i][j + 1].color) {
+        return true
+      }
+      if (i !== GRID_HEIGHT - 1 && grid[i][j].color === grid[i + 1][j].color) {
+        return true
+      }
+    }
+  }
+  return false
 }
 
 const checkPlus = (grid: Tile[][], tile: Tile) => {
